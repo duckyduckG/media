@@ -5824,7 +5824,7 @@ OMX_ERRORTYPE omx_vdec::allocate_extradata()
             return OMX_ErrorInsufficientResources;
         }
         DEBUG_PRINT_HIGH("Allocated extradata size : %d fd: %d",
-             drv_ctx.extradata_info.size, drv_ctx.extradata_info.ion.ion_device_fd);
+             drv_ctx.extradata_info.size, drv_ctx.extradata_info.ion.data_fd);
 
         drv_ctx.extradata_info.uaddr = ion_map(drv_ctx.extradata_info.ion.data_fd,
                                                drv_ctx.extradata_info.size);
