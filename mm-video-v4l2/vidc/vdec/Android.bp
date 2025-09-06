@@ -44,6 +44,7 @@ cc_library_shared {
     shared_libs: [
         "libc2dcolorconvert",
         "libcutils",
+        "libion",
         "liblog",
         "libplatformconfig",
         "libqdMetaData",
