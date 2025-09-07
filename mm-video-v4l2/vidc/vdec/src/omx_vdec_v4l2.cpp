@@ -6634,9 +6634,11 @@ OMX_ERRORTYPE  omx_vdec::allocate_input_buffer(
         int rc;
         DEBUG_PRINT_LOW("Allocate input Buffer");
 #ifdef USE_ION
+        align_size = drv_ctx.ip_buf.buffer_size + 512;
+        align_size = (align_size + drv_ctx.ip_buf.alignment - 1)&(~(drv_ctx.ip_buf.alignment - 1));
         bool status = alloc_map_ion_memory(
-                drv_ctx.ip_buf.buffer_size, &drv_ctx.ip_buf_ion_info[i],
-                secure_mode ? SECURE_FLAGS_INPUT_BUFFER : 0);
+                align_size, &drv_ctx.ip_buf_ion_info[i],
+                secure_mode ? SECURE_FLAGS_INPUT_BUFFER : ION_FLAG_CACHED);
         if (status == false) {
             return OMX_ErrorInsufficientResources;
         }
@@ -6897,7 +6899,10 @@ OMX_ERRORTYPE  omx_vdec::allocate_output_buffer(
             // of the YUVs. Output buffers are cache-invalidated in driver.
             // If color-conversion is involved, Only the C2D output buffers are cached, no
             // need to cache the decoder's output buffers
-            int cache_flag = client_buffers.is_color_conversion_enabled() ? 0 : ION_FLAG_CACHED;
+            int cache_flag = ION_FLAG_CACHED;
+            if (intermediate == true && client_buffers.is_color_conversion_enabled()) {
+                cache_flag = 0;
+            }
             bool status = alloc_map_ion_memory(drv_ctx.op_buf.buffer_size,
                     &drv_ctx.op_buf_ion_info[i],
                     (secure_mode && !secure_scaling_to_non_secure_opb) ?
@@ -7669,6 +7674,7 @@ OMX_ERRORTYPE  omx_vdec::fill_this_buffer(OMX_IN OMX_HANDLETYPE  hComp,
 
         DEBUG_PRINT_LOW("%s: m_is_display_session = %d", __func__, m_is_display_session);
     }
+
     if (client_buffers.is_color_conversion_enabled()) {
         buffer = m_intermediate_out_mem_ptr + nPortIndex;
         buffer->nAllocLen = drv_ctx.op_buf.buffer_size;

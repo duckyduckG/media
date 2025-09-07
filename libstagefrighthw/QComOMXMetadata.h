@@ -21,6 +21,7 @@
 #include "cutils/native_handle.h"
 #include <media/hardware/MetadataBufferType.h>
 
+typedef const native_handle_t* buffer_handle_t;
 namespace android {
     typedef struct encoder_nativehandle_buffer_type {
         MetadataBufferType buffer_type;
