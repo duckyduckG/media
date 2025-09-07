@@ -11331,8 +11331,6 @@ bool omx_vdec::handle_extradata(OMX_BUFFERHEADERTYPE *p_buf_hdr)
                     vqzip_payload = (struct msm_vidc_vqzip_sei_payload*)(void *)data->data;
                     if (client_extradata & OMX_VQZIPSEI_EXTRADATA) {
                         p_buf_hdr->nFlags |= OMX_BUFFERFLAG_EXTRADATA;
-                        append_vqzip_extradata(p_extra, vqzip_payload);
-                        p_extra = (OMX_OTHER_EXTRADATATYPE *) (((OMX_U8 *) p_extra) + ALIGN(p_extra->nSize, 4));
                         if (p_client_extra) {
                             append_vqzip_extradata(p_client_extra, vqzip_payload);
                             p_client_extra = (OMX_OTHER_EXTRADATATYPE *) (((OMX_U8 *) p_client_extra) + ALIGN(p_client_extra->nSize, 4));
